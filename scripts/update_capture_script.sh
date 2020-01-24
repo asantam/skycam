@@ -1,8 +1,8 @@
 #!/usr/bin/env sh
 # Copy new capture script from data folder and set as executable
 
-SCRIPT_CURRENT="/home/data/data/capture_local.sh.new"
-SCRIPT_NEW="/home/control/skycam/scripts/capture_local.sh"
+SCRIPT_NEW="/home/control/capture_local.sh"
+SCRIPT_CURRENT="/home/control/skycam/scripts/capture_local.sh"
 SCRIPT_LOG="/home/control/skycam/scripts/update_capture.log.gz"
 
 if [ -f "$SCRIPT_NEW" ]; then
@@ -13,10 +13,13 @@ if [ -f "$SCRIPT_NEW" ]; then
 	# Rename new script and make it executable
 	mv "$SCRIPT_NEW" "$SCRIPT_CURRENT"
 	chmod +x "$SCRIPT_CURRENT"
+	# Write last update to log
+	printf "%s:\n\%s\n" \
+	"Capture script updated on $TIMESTAMP" \
+	"$(diff "$SCRIPT_CURRENT"."$TIMESTAMP" "$SCRIPT_CURRENT")" |\
+	gzip >> "$SCRIPT_LOG"
 	# Compress old script
 	gzip "$SCRIPT_CURRENT"."$TIMESTAMP"
-	# Write last update to log
-	printf "%s\n" "Capture script updated on $TIMESTAMP" | gzip >> "$SCRIPT_LOG"
 fi
 
 exit 0
