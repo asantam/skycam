@@ -29,4 +29,5 @@
 */1 14 * * * /home/control/skycam/scripts/capture_local.sh
 
 # Update capture script routines
-1 */3 * * * /home/control/skycam/scripts/update_capture_script.sh
+@reboot /home/control/skycam/scripts/update_capture_script.sh
+1 */6 * * * /home/control/skycam/scripts/update_capture_script.sh
