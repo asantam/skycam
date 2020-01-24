@@ -8,7 +8,7 @@
 compress() {
 local INPUTFILE="$1"
 local OUTPUTFILE="$2"
-xz -9 "$INPUTFILE" && mv "$INPUTFILE".xz "$OUTPUTFILE".xz
+xz -9 "$INPUTFILE" && mv "$INPUTFILE".xz "$OUTPUTFILE".xz >/dev/null 2>&1
 }
 
 # Get datetime signature.
@@ -20,8 +20,8 @@ DAY=${DATETIME:6:2}
 # Define temporary directory and output file.
 TMPDIR="/dev/shm/"
 OUTDIR="/home/data/data/"
+LOGFILE="${OUTDIR}skycam1_${YEAR}${MONTH}${DAY}.log.xz"
 
-# Take picture and save to temporary directory.
 # This takes a jpeg with low quality and saves raw data to metadata,
 # which allows to have a low quality visual image but keep have the
 # raw data from the sensor (pre bayer filter). Mode is defined to 3 which
@@ -29,7 +29,7 @@ OUTDIR="/home/data/data/"
 # 1<=fps<=15. Read more on:
 # https://picamera.readthedocs.io/en/release-1.13/fov.html#sensor-modes
 # mode 2 could also work.
-#printf "%s\n" "Taking picture $OUTFILE"
+#printf "%s\n" "Taking picture $OUTFILE" | xz >> "$LOGFILE"
 #raspistill -n -ag 1 -dg 1 -mm matrix -t 2000 --ISO 100 --ev -10 -q 100 -r -o "$OUTDIR""$OUTFILE"
 
 # Bracketed exposure for HDR
@@ -37,12 +37,11 @@ echo "HDR MODE"
 EV_INDEX=0
 for EV in -18 -9 6; do
  OUTFILE="${HOSTNAME}_${DATETIME}_${EV_INDEX}.jpg"
- printf "%s\n" "Taking picture $OUTFILE"
- raspistill -n -ag 1 -dg 1 -mm matrix -t 2000 --ISO 100 --ev ${EV} -q 100 -r -o "$TMPDIR""$OUTFILE"
+ printf "%s\n" "Taking picture $OUTFILE" | xz >> "$LOGFILE"
+ raspistill -v -n -ag 1 -dg 1 -mm matrix -t 2000 --ISO 100 --ev ${EV} -q 100 -r -o "$TMPDIR""$OUTFILE" 2>&1 | xz >>"$LOGFILE"
  EV_INDEX=$(( EV_INDEX + 1 ))
  # Compression
  compress "$TMPDIR""$OUTFILE" "$OUTDIR""$OUTFILE" &
- #xz "$OUTDIR""$OUTFILE" &
 done
 
 exit 0
