@@ -30,15 +30,21 @@ TARFILE="${OUTDIR}${BASEFILE}.data.tar"
 #raspistill -n -ag 1 -dg 1 -mm matrix -t 2000 --ISO 100 --ev -10 -q 100 -r -o "$OUTDIR""$OUTFILE"
 
 # Bracketed exposure for HDR
-echo "HDR MODE"
 EV_INDEX=0
 for EV in -18 -9 6; do
- OUTFILE="${HOSTNAME}_${DATETIME}_${EV_INDEX}.jpg"
+ TMPFILE="${TMPDIR}${HOSTNAME}_${DATETIME}_${EV_INDEX}.jpg"
  printf "%s\n" "Taking picture $OUTFILE" | xz >> "$LOGFILE"
- raspistill -v -n -ag 1 -dg 1 -mm matrix -t 2000 --ISO 100 --ev ${EV} -q 100 -r -o "$TMPDIR""$OUTFILE" 2>&1 | xz >>"$LOGFILE"
+ raspistill -v -n -ag 1 -dg 1 -mm matrix -t 2000 --ISO 100 --ev ${EV} -q 100 -r -o "$TMPFILE" 2>&1 | xz >>"$LOGFILE"
  EV_INDEX=$(( EV_INDEX + 1 ))
  # Compression
  xz -6 "$TMPFILE" &
 done
+
+wait
+
+# Add captures to daily tarfile
+cd "$TMPDIR"
+tar --append -f "$TARFILE" "${HOSTNAME}_${DATETIME}"*.xz && \
+  rm "${TMPDIR}${HOSTNAME}_${DATETIME}"*.xz
 
 exit 0
