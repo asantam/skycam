@@ -5,12 +5,6 @@
 #       PNG could be a loseless option to get RGB components too.
 # Andres
 
-compress() {
-local INPUTFILE="$1"
-local OUTPUTFILE="$2"
-xz -9 "$INPUTFILE" && mv "$INPUTFILE".xz "$OUTPUTFILE".xz >/dev/null 2>&1
-}
-
 # Get datetime signature.
 DATETIME="$(date -u +%Y%m%dT%H%M%S)"
 YEAR=${DATETIME:0:4}
@@ -41,7 +35,7 @@ for EV in -18 -9 6; do
  raspistill -v -n -ag 1 -dg 1 -mm matrix -t 2000 --ISO 100 --ev ${EV} -q 100 -r -o "$TMPDIR""$OUTFILE" 2>&1 | xz >>"$LOGFILE"
  EV_INDEX=$(( EV_INDEX + 1 ))
  # Compression
- compress "$TMPDIR""$OUTFILE" "$OUTDIR""$OUTFILE" &
+ xz -6 "$TMPFILE" &
 done
 
 exit 0
