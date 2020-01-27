@@ -11,10 +11,13 @@ YEAR=${DATETIME:0:4}
 MONTH=${DATETIME:4:2}
 DAY=${DATETIME:6:2}
 
-# Define temporary directory and output file.
+# Define camera name, temporary directory and output file.
+CAMERA=$HOSTNAME
 TMPDIR="/dev/shm/"
 OUTDIR="/home/data/data/"
-LOGFILE="${OUTDIR}skycam1_${YEAR}${MONTH}${DAY}.log.xz"
+BASEFILE="${CAMERA}_${YEAR}${MONTH}${DAY}"
+LOGFILE="${OUTDIR}${BASEFILE}.log.xz"
+TARFILE="${OUTDIR}${BASEFILE}.data.tar"
 
 # This takes a jpeg with low quality and saves raw data to metadata,
 # which allows to have a low quality visual image but keep have the
