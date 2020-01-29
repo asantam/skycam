@@ -22,25 +22,25 @@ if [ -f "$SCRIPT_CAPTURE_NEW" ]; then
     gzip "$SCRIPT_CAPTURE_CURRENT"."$TIMESTAMP"
 fi
 
-SCRIPT_NETWORK_NEW="/home/control/skycam_network.sh"
-SCRIPT_NETWORK_CURRENT="/home/control/skycam/scripts/skycam_network.sh"
-SCRIPT_NETWORK_LOG="/data/data/update_startup.log"
+SCRIPT_STARTUP_NEW="/home/control/skycam_startup.sh"
+SCRIPT_STARTUP_CURRENT="/home/control/skycam/scripts/skycam_startup.sh"
+SCRIPT_STARTUP_LOG="/data/data/update_startup.log"
 
-if [ -f "$SCRIPT_NETWORK_NEW" ]; then
+if [ -f "$SCRIPT_STARTUP_NEW" ]; then
   # Get timestamp to rename old script files
   TIMESTAMP="$(date +%Y%m%dT%H%M%S)"
   # Rename current script
-  mv "$SCRIPT_NETWORK_CURRENT" "$SCRIPT_NETWORK_CURRENT"."$TIMESTAMP"
+  mv "$SCRIPT_STARTUP_CURRENT" "$SCRIPT_STARTUP_CURRENT"."$TIMESTAMP"
   # Rename new script and make it executable
-  mv "$SCRIPT_NETWORK_NEW" "$SCRIPT_NETWORK_CURRENT"
-  chmod +x "$SCRIPT_NETWORK_CURRENT"
+  mv "$SCRIPT_STARTUP_NEW" "$SCRIPT_STARTUP_CURRENT"
+  chmod +x "$SCRIPT_STARTUP_CURRENT"
   # Write last update to log
   printf "%s:\n\%s\n" \
     "Capture script updated on $TIMESTAMP" \
-    "$(diff "$SCRIPT_NETWORK_CURRENT"."$TIMESTAMP" "$SCRIPT_NETWORK_CURRENT")" \
-    >> "$SCRIPT_NETWORK_LOG"
+    "$(diff "$SCRIPT_STARTUP_CURRENT"."$TIMESTAMP" "$SCRIPT_STARTUP_CURRENT")" \
+    >> "$SCRIPT_STARTUP_LOG"
       # Compress old script
-      gzip "$SCRIPT_NETWORK_CURRENT"."$TIMESTAMP"
+      gzip "$SCRIPT_STARTUP_CURRENT"."$TIMESTAMP"
 fi
 
 exit 0
