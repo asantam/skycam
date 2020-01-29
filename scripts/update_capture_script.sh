@@ -1,8 +1,8 @@
 #!/usr/bin/env sh
 # Copy new capture script from data folder and set as executable
 
-SCRIPT_NEW="/home/control/capture_local.sh"
-SCRIPT_CURRENT="/home/control/skycam/scripts/capture_local.sh"
+SCRIPT_NEW="/home/control/capture_local.py"
+SCRIPT_CURRENT="/home/control/skycam/scripts/capture_local.py"
 SCRIPT_LOG="/home/control/skycam/scripts/update_capture.log.gz"
 
 if [ -f "$SCRIPT_NEW" ]; then
