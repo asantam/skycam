@@ -1,3 +1,4 @@
+# SkyCam control crontab
 # m h  dom mon dow   command
 
 # Capture routines
@@ -7,5 +8,5 @@
 */1 14 * * * /home/control/skycam/scripts/capture_local.py
 
 # Update capture script routines
-@reboot /home/control/skycam/scripts/update_capture_script.sh
-1 */6 * * * /home/control/skycam/scripts/update_capture_script.sh
+@reboot /home/control/skycam/scripts/update_scripts.sh
+1 */6 * * * /home/control/skycam/scripts/update_scripts.sh
