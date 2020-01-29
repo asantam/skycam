@@ -1,0 +1,4 @@
+# SkyCam root crontab
+# m h  dom mon dow   command
+@reboot /home/control/skycam/scripts/skycam_startup.sh
+0 0 * * * /sbin/reboot
