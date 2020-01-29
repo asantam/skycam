@@ -1,11 +1,18 @@
 #!/usr/bin/env sh
-# Script to be run at reboot by root cront job
+# SkyCam startup script
+# To be run at reboot by root cront job
+# Currently does:
+# - Check if wired interface has been assigned an interface.
+#   If not, then start a dhcp server.
 
 # 0) Check if run as root
 if [ "$(id -u)" != "0" ]; then
   printf "%s\n" "Must be run as root" 1>&2
   exit 1
 fi
+
+# Print date
+date
 
 # 1) Wait 90 seconds for an ip on wired interface
 RETRIES_IP=0
@@ -15,7 +22,7 @@ while [ "$RETRIES_IP" -lt 9 ]; do
         printf "%s\n" "eth0 has an ip assigned already!"
         exit 0
     else
-        # Sleep for a minute
+        # Sleep for 10 seconds
         sleep 10
         RETRIES_IP=$(( RETRIES_IP + 1 ))
     fi
@@ -25,15 +32,11 @@ done
 # To launch DHCP server on a single interface, copy and rename a system service template.
 printf "%s\n" "Starting DHCP server on eth0"
 INTERFACE=eth0
-SERV_TEMPLATE="/etc/systemd/system/dhcpd4@TEMPLATE.service"
-SERV_NEW=$(\
-  printf "%s" "$SERV_TEMPLATE" |\
-  sed -e "s/TEMPLATE/${INTERFACE}/")
-SERV_NAME=$(basename "$SERV_NEW")
+SERV_NAME="dhcpd4@eth0.service"
 
 ip link set up dev eth0
-ip addr 192.168.100.1/16 dev eth0
-cp "$SERV_TEMPLATE" "$SERV_NEW"
+ip addr add 192.168.100.1/16 dev eth0
+systemctl daemon-reload
 systemctl start "$SERV_NAME" || exit 1
 
 
