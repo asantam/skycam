@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+"""
+Main SkyCam capture script.
+It captures and compress single or multiple images
+and adds them to a daily tarfile.
+"""
 import bz2
 import io
 import os
@@ -19,6 +24,14 @@ def capture_hdr(
     bayer=True,
     meter_mode='average',
 ):
+    """
+    Main capture routine, passes most arguments to picamera
+    capture options. This routine let's the camera automatically
+    define exposure parameters and then lock them to obtain
+    a series of images at different relative exposure values
+    given by the ev_list argument.
+    Returns a list of the captured images paths.
+    """
     # Initialize camera
     with PiCamera(
         resolution=(width, height),
@@ -37,6 +50,9 @@ def capture_hdr(
         awb_gains = camera.awb_gains
         camera.awb_mode = 'off'
         camera.awb_gains = awb_gains
+        # Create a list of streams to capture the images.
+        # To reduce the time between captures, each image is compressed
+        # and written to disk after all have been captured.
         stream_list = [io.BytesIO() for i in range(len(ev_list))]
         for i, exposure_speed in enumerate(exposure_speeds):
             camera.shutter_speed = exposure_speed
@@ -46,6 +62,7 @@ def capture_hdr(
                 quality=quality,
                 bayer=bayer,
             )
+    # Compress and write images (to ramdisk ideally).
     output_file_list = []
     for i, ev in enumerate(ev_list):
         output_file_list.append(
@@ -69,6 +86,7 @@ if __name__ == '__main__':
     # Define output file options
     dir_tmp = '/dev/shm/'
     dir_out = '/home/data/data/'
+    # Get information from system to name output files
     hostname = socket.gethostname()
     gmt = time.gmtime()
     timestamp = time.strftime('%Y%m%dT%H%M%S', gmt)
