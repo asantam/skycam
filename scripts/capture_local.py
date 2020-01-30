@@ -13,7 +13,7 @@ import time
 from picamera import PiCamera
 
 
-def capture_hdr(
+def capture_images(
     output_basename,
     image_format='jpeg',
     ev_list=[0.3, 0.8, 1.0, 1.2],
@@ -94,7 +94,7 @@ if __name__ == '__main__':
     basename = hostname + '_' + timestamp
 
     # Run capture routine
-    files_out = capture_hdr(dir_tmp + basename)
+    files_out = capture_images(dir_tmp + basename)
     # Archive files into daily tar and remove them from ramdisk
     file_tar = dir_out + hostname + '_' + date + '.tar'
     with tarfile.open(file_tar, 'a') as tar:
