@@ -40,7 +40,7 @@ def capture_images(
         # Wait for the automatic gain control to settle
         time.sleep(2)
         while camera.exposure_speed == 0:
-            time.sleep(0.1)
+            time.sleep(0.5)
         # Now stop automatic exposure and white balance, and fix gains
         camera.exposure_mode = "off"
         exposure_speeds = [int(camera.exposure_speed * e) for e in ev_list]
@@ -82,7 +82,7 @@ def capture_images(
 if __name__ == "__main__":
     # Define output file options
     dir_tmp = "/dev/shm/"
-    dir_out = "/home/data/data/"
+    dir_out = "/home/control/data/"
     # Get information from system to name output files
     hostname = socket.gethostname()
     gmt = time.gmtime()
