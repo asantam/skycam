@@ -1,6 +1,7 @@
 # Local folders
 data/
 logs/
+m/
 # Python
 __pycache__/
 *.py[cod]
