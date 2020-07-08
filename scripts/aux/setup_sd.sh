@@ -16,5 +16,6 @@ mkfs.ext4 /dev/mmcblk0p3
 >>/etc/fstab printf "%s\n" "/dev/mmcblk0p3 /home/control/data ext4 defaults,noatime,nofail,x-systemd.device-timeout=9 0 2"
 
 # Mount and change ownership
+mkdir /home/control/data
 mount /dev/mmcblk0p3
 chown control:control /home/control/data
