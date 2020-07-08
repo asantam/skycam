@@ -10,3 +10,4 @@ The current scripts are:
 The [scripts/aux](scripts/aux) directory holds the current [crontabs](scripts/aux/crontab) and [network](scripts/aux/network) configuration scripts.
 
 Data processing scripts will be shared on a different repository (TBD).
+
