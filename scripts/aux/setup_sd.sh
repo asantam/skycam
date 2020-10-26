@@ -7,7 +7,7 @@ if test "$(id -u)" -ne "0"; then
 fi
 
 # Generate new partition for data
-printf "n\np\n3\n3612672\n\nw" | fdisk /dev/mmcblk0
+printf "n\np\n3\n13115392\n\nw" | fdisk /dev/mmcblk0
 
 # Format new partition
 mkfs.ext4 /dev/mmcblk0p3
