@@ -1,0 +1,14 @@
+[Unit]
+Description=AutoSSH tunnel to bastion server
+After=network.target
+
+[Service]
+Type=simple
+Environment="AUTOSSH_GATETIME=0"
+ExecStart=/usr/bin/autossh -M 0 -q -N -o "ServerAliveInterval 60" -o "ServerAliveCountMax 3" -R XXXXX:localhost:XXXXX user@server
+Restart=on-failure
+RestartSec=60
+KillMode=process
+
+[Install]
+WantedBy=default.target
