@@ -8,7 +8,6 @@ import bz2
 import io
 import os
 import socket
-import tarfile
 import time
 import shutil
 
@@ -53,6 +52,8 @@ def sftp_upload(hostname, file_list):
         return 0
     except:
         return 1
+
+
 def capture_images(
     output_basename,
     image_format="jpeg",
@@ -132,12 +133,14 @@ if __name__ == "__main__":
 
     # Run capture routine
     files_out = capture_images(dir_tmp + basename)
-    # Archive files into daily tar and remove them from ramdisk
-    file_tar = dir_out + hostname + "_" + date + ".tar"
-    with tarfile.open(file_tar, "a") as tar:
-        for file_name in files_out:
-            tar.add(
-                file_name, arcname=file_name.replace(dir_tmp, basename + "/"),
-            )
-            os.remove(file_name)
-    print(file_tar)
+
+    # Copy to FTP, if it fails move it to local storage
+    r = sftp_upload("ftp_host", files_out)
+    if r == 0:
+        # If transfer succedes delete files from ramdisk
+        for f in files_out:
+            os.remove(f)
+    else:
+        # If it fails, move them to local storage for later upload
+        for f in files_out:
+            _ = shutil.move(f, "/home/control/data/")
