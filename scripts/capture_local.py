@@ -10,9 +10,49 @@ import os
 import socket
 import tarfile
 import time
+import shutil
+
+import paramiko
+import pysftp
 from picamera import PiCamera
 
 
+def sftp_read_config(hostname):
+    """
+    Read host information from ssh config file
+    """
+    ssh_config = paramiko.SSHConfig()
+    user_config_file = os.path.expanduser("~/.ssh/sftp_config")
+    if os.path.exists(user_config_file):
+        with open(user_config_file) as f:
+            ssh_config.parse(f)
+    return ssh_config.lookup(hostname)
+
+
+def sftp_upload(hostname, file_list):
+    # Read host information
+    host_info = sftp_read_config(hostname)
+    host_addr = host_info["hostname"]
+    host_user = host_info["user"]
+    host_dir = host_info["directory"]
+    print(f"Uploading to {hostname}: {host_addr}")
+    if "identityfile" in host_info.keys():
+        host_key = host_info["identityfile"][0]
+        host_config = {"username": host_user, "private_key": host_key}
+    else:
+        host_pass = host_info["password"]
+        host_config = {"username": host_user, "password": host_pass}
+
+    # Connect to host and upload file
+    try:
+        with pysftp.Connection(host_addr, **host_config) as sftp:
+            with sftp.cd(host_dir):
+                for f in file_list:
+                    print(f"Uploading {f}...")
+                    sftp.put(f)
+        return 0
+    except:
+        return 1
 def capture_images(
     output_basename,
     image_format="jpeg",
