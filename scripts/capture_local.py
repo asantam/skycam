@@ -16,12 +16,12 @@ from picamera import PiCamera
 def capture_images(
     output_basename,
     image_format="jpeg",
-    ev_list=[0.3, 0.8, 1.0, 1.2],
+    ev_list=[0.05, 0.10, 0.50],
     width=2492,
     height=1944,
     iso=100,
     quality=100,
-    bayer=True,
+    bayer=False,
     meter_mode="average",
 ):
     """
