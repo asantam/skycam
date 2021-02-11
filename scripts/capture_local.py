@@ -143,4 +143,4 @@ if __name__ == "__main__":
     else:
         # If it fails, move them to local storage for later upload
         for f in files_out:
-            _ = shutil.move(f, "/home/control/data/")
+            _ = shutil.move(f, dir_out)
