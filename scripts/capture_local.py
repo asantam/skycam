@@ -106,7 +106,7 @@ def capture_images(
         output_file_list.append(
             "{}_{}.{}.bz2".format(
                 output_basename,
-                str(ev_list[i]).replace(".", "p"),
+                "{:.2f}".format(ev_list[i]).replace(".", "p"),
                 image_format,
             )
         )
