@@ -138,9 +138,11 @@ if __name__ == "__main__":
     r = sftp_upload("ftp_host", files_out)
     if r == 0:
         # If transfer succedes delete files from ramdisk
+        print("Upload Ok. Removing local files...")
         for f in files_out:
             os.remove(f)
     else:
         # If it fails, move them to local storage for later upload
+        print("Upload Failed. Saving local files...")
         for f in files_out:
             _ = shutil.move(f, dir_out)
