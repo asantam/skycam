@@ -28,12 +28,13 @@ def sftp_read_config(hostname):
     return ssh_config.lookup(hostname)
 
 
-def sftp_upload(hostname, file_list):
+def sftp_upload(hostname, file_list, sub_dir=""):
     # Read host information
     host_info = sftp_read_config(hostname)
     host_addr = host_info["hostname"]
     host_user = host_info["user"]
     host_dir = host_info["directory"]
+    full_dir = host_dir + "/" + sub_dir
     print(f"Uploading to {hostname}: {host_addr}")
     if "identityfile" in host_info.keys():
         host_key = host_info["identityfile"][0]
@@ -45,10 +46,26 @@ def sftp_upload(hostname, file_list):
     # Connect to host and upload file
     try:
         with pysftp.Connection(host_addr, **host_config) as sftp:
-            with sftp.cd(host_dir):
-                for f in file_list:
-                    print(f"Uploading {f}...")
-                    sftp.put(f)
+            try:
+                # Try to access full directory
+                sftp.chdir(full_dir)
+            except FileNotFoundError:
+                # Directory doesnt exist, we must create it
+                sftp.chdir(host_dir)
+                for d in sub_dir.split("/"):
+                    try:
+                        sftp.mkdir(d)
+                    except OSError:
+                        # Catch error if directory already exists
+                        pass
+                    try:
+                        sftp.chdir(d)
+                    except FileNotFoundError:
+                        print(f"ERR:{hostname} can't create subdir {sub_dir}")
+                        return 1
+            for f in file_list:
+                print(f"Uploading {f}...")
+                sftp.put(f)
         return 0
     except:
         return 1
@@ -135,7 +152,8 @@ if __name__ == "__main__":
     files_out = capture_images(dir_tmp + basename)
 
     # Copy to FTP, if it fails move it to local storage
-    r = sftp_upload("ftp_host", files_out)
+    sub_dir = time.strftime("%Y/%m/%d", gmt)
+    r = sftp_upload("ftp_host", files_out, sub_dir=sub_dir)
     if r == 0:
         # If transfer succedes delete files from ramdisk
         print("Upload Ok. Removing local files...")
