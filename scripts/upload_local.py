@@ -10,6 +10,16 @@ import paramiko
 import pysftp
 
 
+def sftp_callback(current, total):
+    """
+    Callback function for pysftp.Connection().put() to limit bandwidth use.
+    Not very precise but simple.
+    """
+    SFTP_BUFFSIZE = 32768  # SFTP default buffer size (32 Kb)
+    bandwidth_limit = 20480  # Bandwidth limit in bytes
+    time.sleep(SFTP_BUFFSIZE / bandwidth_limit)
+
+
 def sftp_read_config(hostname):
     """
     Read host information from ssh config file
